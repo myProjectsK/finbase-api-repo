@@ -6,9 +6,9 @@ using System.Web;
 
 namespace FinBaseWebApp.Models
 {
-    public class PublicUserLoanModel
+    public class ApplicationsModel
     {
-        public string PublicUserLoanId { get; set; }    
+        public string LoanId { get; set; }    
         public string ApplicationNo { get; set; }   
         public string Name { get; set; }        
 
@@ -21,7 +21,7 @@ namespace FinBaseWebApp.Models
         public string LoanType { get; set; }
         public long Amount { get; set; }
         public double RateOfInterest { get; set; }
-        public List<PublicUserLoanFilesModel> DocumentFiles { get; set; } = new List<PublicUserLoanFilesModel>();
+        public List<ApplicationFilesModel> DocumentFiles { get; set; } = new List<ApplicationFilesModel>();
         public string CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
         public String ModifiedBy { get; set; }

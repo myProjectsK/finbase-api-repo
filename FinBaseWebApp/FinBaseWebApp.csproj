@@ -200,9 +200,6 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
-    <Compile Include="Controllers\PublicUserLoanController.cs" />
-    <Compile Include="Models\PublicUserLoanFilesModel.cs" />
-    <Compile Include="Models\PublicUserLoanModel.cs" />
     <Compile Include="MyDateTimeConvertor.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
@@ -260,15 +257,12 @@
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Queries\AuthenticateModuleQueries.cs" />
     <Compile Include="Queries\LogQueries.cs" />
-    <Compile Include="Queries\PublicUserLoanQueries.cs" />
     <Compile Include="Queries\PublicUserQueries.cs" />
     <Compile Include="Readers\AuthenticateModuleDAO.cs" />
     <Compile Include="Readers\LogDAO.cs" />
     <Compile Include="Readers\PublicUserDAO.cs" />
-    <Compile Include="Readers\PublicUserLoanDAO.cs" />
     <Compile Include="Repository\AuthenticationRepository.cs" />
     <Compile Include="Repository\LogRepository.cs" />
-    <Compile Include="Repository\PublicUserLoanRepo.cs" />
     <Compile Include="Repository\PublicUserRepository.cs" />
     <Compile Include="Repository\RefreshTokenProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />

@@ -5,7 +5,7 @@ using System.Web;
 
 namespace FinBaseWebApp.Models
 {
-    public class PublicUserLoanFilesModel
+    public class ApplicationFilesModel
     {
         public string MobileNo { get; set; }
         public int FileNo { get; set; }

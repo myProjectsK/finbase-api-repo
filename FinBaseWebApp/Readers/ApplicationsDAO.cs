@@ -11,30 +11,31 @@ using System.Web;
 
 namespace FinBaseWebApp.Readers
 {
-    public class PublicUserLoanDAO
+    public class ApplicationsDAO
     {
         private readonly string _connectionString;      
 
-        public PublicUserLoanDAO()
+        public ApplicationsDAO()
         {
             _connectionString = ConfigurationManager.ConnectionStrings["FinBaseDB"].ConnectionString;
         }
 
-        public PublicUserLoanModel GetUserLoanInfo(string mobile)
+        public ApplicationsModel GetApplicationDAO(string mobile)
         {
             using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
                 dbConnection.Open();
 
-                var query = PublicUserLoanQueries.GET_USERLOAN_DETAILS;     
-                var userDictionary = new Dictionary<string, PublicUserLoanModel>();
-                var result = dbConnection.Query<PublicUserLoanModel, PublicUserLoanFilesModel, PublicUserLoanModel>(query, (user, file) =>
+                var query = ApplicationQueries.GET_APPLICATION_DETAILS;         
+                var userDictionary = new Dictionary<string, ApplicationsModel>();
+                var result = dbConnection.Query<ApplicationsModel, ApplicationFilesModel, ApplicationsModel>(query, (user, file) =>
                 {
                     // Check if the user already exists in the dictionary
                     if (!userDictionary.TryGetValue(user.MobileNo, out var userEntry))
                     {
-                        userEntry = new PublicUserLoanModel     
+                        userEntry = new ApplicationsModel     
                         {
+                            ApplicationNo = user.ApplicationNo, 
                             Name = user.Name,   
                             MobileNo = user.MobileNo,       
                             DateOfBirth = user.DateOfBirth,
@@ -44,7 +45,8 @@ namespace FinBaseWebApp.Readers
                             LoanType = user.LoanType,   
                             Amount = user.Amount,   
                             RateOfInterest = user.RateOfInterest,   
-                            DocumentFiles = new List<PublicUserLoanFilesModel>() // Initialize document list
+                            CreatedAt = user.CreatedAt, 
+                            DocumentFiles = new List<ApplicationFilesModel>()   
                         };
                         userDictionary.Add(user.MobileNo, userEntry);
                     }
@@ -52,7 +54,7 @@ namespace FinBaseWebApp.Readers
                     // Add the document if it's not null
                     if (file != null && !string.IsNullOrEmpty(file.DocumentFileName))
                     {
-                        userEntry.DocumentFiles.Add(new PublicUserLoanFilesModel    
+                        userEntry.DocumentFiles.Add(new ApplicationFilesModel    
                         {
                             DocumentFileName = file.DocumentFileName    
                         });     
@@ -68,13 +70,13 @@ namespace FinBaseWebApp.Readers
             }
         }
 
-        public bool InsertPublicUserLoan(PublicUserLoanModel user)
+        public bool InsertApplicationDAO(ApplicationsModel user)
         {
             using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
                 dbConnection.Open();
 
-                var query = PublicUserLoanQueries.INSERT_INTO_PUBLICUSERLOAN;   
+                var query = ApplicationQueries.INSERT_INTO_APPLICATIONS;    
                 var row = dbConnection.Execute(query, new
                 {
                     @AppNo = user.ApplicationNo,    
@@ -98,12 +100,12 @@ namespace FinBaseWebApp.Readers
             }
         }
 
-        public bool InsertPublicUserLoanFile(PublicUserLoanFilesModel file)
+        public bool InsertApplicationFileDAO(ApplicationFilesModel file)
         {
             using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
                 dbConnection.Open();
-                var query = PublicUserLoanQueries.INSERT_INTO_PUBLICUSERLOANFILES;   
+                var query = ApplicationQueries.INSERT_INTO_APPLICATIONFILES;     
                 var row = dbConnection.Execute(query, new
                 {
                     @MobileNo = file.MobileNo,  
@@ -120,13 +122,13 @@ namespace FinBaseWebApp.Readers
             }
         }
 
-        public bool UpdatePublicUserLoan(PublicUserLoanModel user, string mobile)
+        public bool UpdateApplicationDAO(ApplicationsModel user, string mobile)
         {
             using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
                 dbConnection.Open();
 
-                string query = PublicUserLoanQueries.UPDATE_PUBLICUSERLOAN;     
+                string query = ApplicationQueries.UPDATE_APPLICATIONS;    
                 var row = dbConnection.Execute(query, new   
                 {   
                     @Phone = mobile,    
@@ -148,12 +150,12 @@ namespace FinBaseWebApp.Readers
             }
         }
 
-        public bool UpdatePublicUserLoanFile(PublicUserLoanFilesModel file, string mobile)
+        public bool UpdateApplicationFileDAO(ApplicationFilesModel file, string mobile)
         {
             using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
-                dbConnection.Open();    
-                var query = PublicUserLoanQueries.UPDATE_PUBLICUSERLOANFILES;   
+                dbConnection.Open();
+                var query = ApplicationQueries.UPDATE_APPLICATIONFILES;        
                 var row = dbConnection.Execute(query, new   
                 {   
                     @Phone = mobile,       
@@ -169,13 +171,13 @@ namespace FinBaseWebApp.Readers
             }
         }
 
-        public bool DeletePublicUserLoan(string mobile)
+        public bool DeleteApplicationDAO(string mobile)
         {
             using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
                 dbConnection.Open();
 
-                string query = PublicUserLoanQueries.DELETE_PUBLICUSERLOAN;     
+                string query = ApplicationQueries.DELETE_APPLICATIONS;      
                 int rowsAffected = dbConnection.Execute(query, new
                 {
                     @MobileNo = mobile,     

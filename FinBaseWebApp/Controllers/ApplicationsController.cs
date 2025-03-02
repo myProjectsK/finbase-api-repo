@@ -14,14 +14,14 @@ using System.Web.Http;
 namespace FinBaseWebApp.Controllers
 {
     [Log]   
-    public class PublicUserLoanController : ApiController
+    public class ApplicationsController : ApiController
     {
-        private readonly PublicUserLoanRepo _userLoanRepo;  
+        private readonly ApplicationsRepo _appRepo;  
         private readonly UploadHelper uploadHelper;     
 
-        public PublicUserLoanController()
+        public ApplicationsController()
         {
-            _userLoanRepo = new PublicUserLoanRepo();   
+            _appRepo = new ApplicationsRepo();   
         }
 
         [HttpGet]
@@ -29,7 +29,7 @@ namespace FinBaseWebApp.Controllers
         [Route("api/PublicUserLoan/{mobile}")]
         public IHttpActionResult Get(string mobile)
         {
-            var result = _userLoanRepo.GetPublicUserLoanRepo(mobile);   
+            var result = _appRepo.GetApplicationsRepo(mobile);   
             return Ok(result);  
         }
 
@@ -43,7 +43,7 @@ namespace FinBaseWebApp.Controllers
                 var httpRequest = HttpContext.Current.Request;
                 ClaimsIdentity identity = User.Identity as ClaimsIdentity;
 
-                var obj = JsonConvert.DeserializeObject<PublicUserLoanModel>(httpRequest.Form["JsonObjStr"]);
+                var obj = JsonConvert.DeserializeObject<ApplicationsModel>(httpRequest.Form["JsonObjStr"]);
 
                 if (obj == null)
                 {
@@ -90,7 +90,7 @@ namespace FinBaseWebApp.Controllers
 
                             if (!string.IsNullOrEmpty(documentType))        // Add document details if document type is identified
                             {   
-                                obj.DocumentFiles.Add(new PublicUserLoanFilesModel
+                                obj.DocumentFiles.Add(new ApplicationFilesModel
                                 {
                                     MobileNo = obj.MobileNo,    
                                     DocumentFileName = Filename,    
@@ -105,7 +105,7 @@ namespace FinBaseWebApp.Controllers
                     }
                 }
 
-                var res = _userLoanRepo.AddPublicUserLoanRepo(obj);     
+                var res = _appRepo.AddApplicationsRepo(obj);     
                 return Ok(res);
             }
             catch (Exception ex)
@@ -130,7 +130,7 @@ namespace FinBaseWebApp.Controllers
                 var httpRequest = HttpContext.Current.Request;
                 ClaimsIdentity identity = User.Identity as ClaimsIdentity;
 
-                var obj = JsonConvert.DeserializeObject<PublicUserLoanModel>(httpRequest.Form["JsonObjStr"]);
+                var obj = JsonConvert.DeserializeObject<ApplicationsModel>(httpRequest.Form["JsonObjStr"]);
 
                 if (obj == null)
                 {
@@ -175,7 +175,7 @@ namespace FinBaseWebApp.Controllers
 
                             if (!string.IsNullOrEmpty(documentType))        // Add document details if document type is identified
                             {
-                                obj.DocumentFiles.Add(new PublicUserLoanFilesModel
+                                obj.DocumentFiles.Add(new ApplicationFilesModel
                                 {
                                     MobileNo = obj.MobileNo,    
                                     FileType = documentType,    
@@ -191,7 +191,7 @@ namespace FinBaseWebApp.Controllers
                     }
                 }
 
-                var res = _userLoanRepo.EditPublicUserLoanRepo(obj, mobile);    
+                var res = _appRepo.EditApplicationsRepo(obj, mobile);    
                 return Ok(res);
             }
             catch (Exception ex)
@@ -218,7 +218,7 @@ namespace FinBaseWebApp.Controllers
                 return Ok(new ResultModel()
                 {
                     Success = true,
-                    Data = _userLoanRepo.DeletePublicUserLoanRepo(mobile),       
+                    Data = _appRepo.DeleteApplicationsRepo(mobile),       
                     ErrorMessage = "User Deleted Successfully",
                     TechDetails = string.Empty
                 });

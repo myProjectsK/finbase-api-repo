@@ -9,21 +9,21 @@ using System.Web;
 
 namespace FinBaseWebApp.Repository
 {
-    public class PublicUserLoanRepo
+    public class ApplicationsRepo
     {
 
-        private readonly PublicUserLoanDAO _userLoanDAO;    
+        private readonly ApplicationsDAO _appDAO;    
 
-        public PublicUserLoanRepo()
+        public ApplicationsRepo()
         {
-            _userLoanDAO = new PublicUserLoanDAO();     
+           _appDAO = new ApplicationsDAO();     
         }
 
-        public ResultModel GetPublicUserLoanRepo(string mobile)
+        public ResultModel GetApplicationsRepo(string mobile)
         {
             try
             {
-                var result = _userLoanDAO.GetUserLoanInfo(mobile);    
+                var result =_appDAO.GetApplicationDAO(mobile);    
 
                 return new ResultModel()
                 {
@@ -45,7 +45,7 @@ namespace FinBaseWebApp.Repository
             }
         }
 
-        public ResultModel AddPublicUserLoanRepo(PublicUserLoanModel user)
+        public ResultModel AddApplicationsRepo(ApplicationsModel user)
         {
             using (var transaction = new TransactionScope(TransactionScopeOption.Required,
                 new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
@@ -62,7 +62,7 @@ namespace FinBaseWebApp.Repository
                     var result = false;
                     var isDocInserted = false;
 
-                    var isUserInserted = _userLoanDAO.InsertPublicUserLoan(user);   
+                    var isUserInserted =_appDAO.InsertApplicationDAO(user);   
                     if (!isUserInserted)    
                         throw new Exception("Failed to insert user into PublicUser table");
 
@@ -74,7 +74,7 @@ namespace FinBaseWebApp.Repository
                         doc.ModifiedAt = DateTime.Now;
                         doc.Status = true;
 
-                        isDocInserted = _userLoanDAO.InsertPublicUserLoanFile(doc);     
+                        isDocInserted =_appDAO.InsertApplicationFileDAO(doc);     
                         if (!isDocInserted)
                             throw new Exception($"Failed to insert document: {doc.DocumentFileName}");
                     }
@@ -108,7 +108,7 @@ namespace FinBaseWebApp.Repository
             }
         }
 
-        public ResultModel EditPublicUserLoanRepo(PublicUserLoanModel user, string mobile)
+        public ResultModel EditApplicationsRepo(ApplicationsModel user, string mobile)
         {
             using (var transaction = new TransactionScope(TransactionScopeOption.Required,
                 new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
@@ -122,7 +122,7 @@ namespace FinBaseWebApp.Repository
                     var result = false;
                     var isDocUpdated = false;
 
-                    var isUserUpdated = _userLoanDAO.UpdatePublicUserLoan(user, mobile);    
+                    var isUserUpdated =_appDAO.UpdateApplicationDAO(user, mobile);    
                     if (!isUserUpdated)
                         throw new Exception("Failed to update user into PublicUser table");
 
@@ -132,7 +132,7 @@ namespace FinBaseWebApp.Repository
                         doc.ModifiedAt = DateTime.Now;
                         doc.Status = true;
 
-                        isDocUpdated = _userLoanDAO.UpdatePublicUserLoanFile(doc, mobile);  
+                        isDocUpdated =_appDAO.UpdateApplicationFileDAO(doc, mobile);  
                         if (!isDocUpdated)
                             throw new Exception($"Failed to update document: {doc.DocumentFileName}");
                     }   
@@ -160,11 +160,11 @@ namespace FinBaseWebApp.Repository
             }
         }
 
-        public ResultModel DeletePublicUserLoanRepo(string mobile)
+        public ResultModel DeleteApplicationsRepo(string mobile)
         {
             try
             {
-                var result = _userLoanDAO.DeletePublicUserLoan(mobile);     
+                var result =_appDAO.DeleteApplicationDAO(mobile);     
 
                 return new ResultModel()
                 {
