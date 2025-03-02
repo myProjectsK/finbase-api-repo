@@ -1,0 +1,15 @@
+﻿# Ignore Visual Studio files
+# Ignore Visual Studio and build files
+.vs/
+bin/
+obj/
+*.suo
+*.user
+*.cache
+*.log
+*.pdb
+*.exe
+*.obj
+*.dll
+*.bin
+*.json.sscache
