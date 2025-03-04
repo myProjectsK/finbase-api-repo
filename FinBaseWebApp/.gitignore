@@ -6,10 +6,22 @@ obj/
 *.suo
 *.user
 *.cache
+*.config
 *.log
 *.pdb
 *.exe
 *.obj
 *.dll
 *.bin
-*.json.sscache
+*.json.sscache
+
+# Ignore DocFX and auto-generated documentation files
+_site/
+api/
+toc.yml
+docfx.json
+log.txt
+
+# Ignore NuGet packages (if needed)
+packages/
+*.nupkg
