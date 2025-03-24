@@ -2,27 +2,35 @@
 using FinBaseWebApp.Readers;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace FinBaseWebApp.Repository
 {
     public class AuthenticationRepository : IDisposable
     {
-        private readonly string _connectionString;      
+        private readonly AuthenticateModuleDAO _authDAO;    
+        private readonly string _connectionString;
 
         public AuthenticationRepository()
         {
-            _connectionString = ConfigurationManager.ConnectionStrings["FinBaseDB"].ConnectionString;     
+            _authDAO = new AuthenticateModuleDAO();     
         }
 
-        public async Task<List<RefreshTokenModel>> GetAllRefreshToken()
+        public async Task<LoginModel> LoginUser(string UserName, string Password)
+        {
+            return await _authDAO.Public_LoginUser(UserName, Password);
+        }
+
+        public async Task<LoginModel> GetUserByUsername(string UserName)
+        {
+            return await _authDAO.GetUserDAO(UserName);
+        }
+
+        /*public async Task<List<RefreshTokenModel>> GetAllRefreshToken()
         {
             var repo = new AuthenticateModuleDAO();
             return await repo.GetAllTokens();     
-        }
+        }*/
 
         public async Task<RefreshTokenModel> GetRefreshTokenById(string tokenId)
         {
