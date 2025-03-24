@@ -20,7 +20,80 @@ namespace FinBaseWebApp.Readers
         public AuthenticateModuleDAO()
         {
             _connectionString = ConfigurationManager.ConnectionStrings["FinBaseDB"].ConnectionString;       
-        }   
+        }
+
+        public async Task<LoginModel> GetUserDAO(string UserName)
+        {
+            try
+            {
+                using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+                {
+                    dbConnection.Open();
+
+                    string query = AuthenticateModuleQueries.GET_USER_DETAILS;      
+                    var result = await dbConnection.QueryFirstOrDefaultAsync<dynamic>(query, new
+                    {
+                        @UserName = UserName
+                    });
+                    if (result == null)
+                        return null;
+
+                    var user = new LoginModel
+                    {
+                        UserId = result.UserId.ToString(),
+                        EmailId = result.EmailId,
+                        Name = result.Name,     
+                        RoleName = result.RoleName
+                    };  
+
+                    return user;
+                }
+            }
+            catch (Exception ex)
+            {
+                var details = ex.Message + Environment.NewLine + ex.ToString() + Environment.NewLine + (ex.InnerException == null ? "" : ex.InnerException.ToString());
+                throw;
+            }
+        }
+
+    public async Task<LoginModel> Public_LoginUser(string UserName, string Password)
+        {
+            try
+            {
+                using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+                {
+                    dbConnection.Open();      
+
+                    string query = AuthenticateModuleQueries.GET_LOGINUSER_FROM_USERNAME_AND_PASSWORD;
+                    var result = await dbConnection.QueryFirstOrDefaultAsync<dynamic>(query, new
+                    {
+                        @UserName = UserName
+                    });     
+                    if (result == null)
+                        return null;
+
+                    var user = new LoginModel
+                    {
+                        UserId = result.UserId.ToString(),  
+                        MobileNo = result.MobileNo, 
+                        EmailId = result.EmailId,   
+                        Name = result.Name, 
+                        PasswordHash = result.PasswordHash, 
+                        RoleName = result.RoleName  
+                    };  
+
+                    if (!BCrypt.Net.BCrypt.Verify(Password, user.PasswordHash))
+                        return null;
+
+                    return user;
+                }
+            }
+            catch (Exception ex)
+            {
+                var details = ex.Message + Environment.NewLine + ex.ToString() + Environment.NewLine + (ex.InnerException == null ? "" : ex.InnerException.ToString());     
+                throw;
+            }
+        }
 
         public async Task<List<RefreshTokenModel>> GetAllTokens()
         {
