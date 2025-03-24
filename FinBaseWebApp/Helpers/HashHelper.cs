@@ -28,5 +28,11 @@ namespace FinBaseWebApp.Helpers
             // Ensure it starts with 1001 and meets size requirements
             return numericGuid.PadLeft(4, '1').Substring(0, 9);
         }   
+
+        public static string GetHashedPassword(string password)
+        {
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);       
+            return hashedPassword;
+        }
     }
 }
