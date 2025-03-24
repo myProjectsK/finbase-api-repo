@@ -18,14 +18,16 @@ namespace FinBaseWebApp
             EnableCorsAttribute cors = new EnableCorsAttribute("*", "*", "*");
             config.EnableCors(cors);
 
-            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
-
+            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html")); 
             config.Formatters.XmlFormatter.SupportedMediaTypes.Add(new System.Net.Http.Headers.MediaTypeHeaderValue("multipart/form-data"));
 
             // Configure Web API to use only bearer token authentication.
-            config.SuppressDefaultHostAuthentication();
-            config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+            // config.SuppressDefaultHostAuthentication();
+            // config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));      
+            config.Filters.Add(new GlobalExceptionHandler());
 
+            // config.MessageHandlers.Add(new PreflightRequestHandler());      
+            config.MessageHandlers.Add(new PreflightRequestHandler());
             // Web API routes
             config.MapHttpAttributeRoutes();
 
