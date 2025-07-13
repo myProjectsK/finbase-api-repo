@@ -9,8 +9,8 @@ namespace FinBaseWebApp.Models
     public class LoginModel
     {
         public string UserId { get; set; }
-        [JsonProperty("Mobile")]
         public string RoleName { get; set; }
+        [JsonProperty("Mobile")]
         public string MobileNo { get; set; }
         public string Name { get; set; }
         [JsonProperty("Email")]
@@ -23,3 +23,4 @@ namespace FinBaseWebApp.Models
         public bool Status { get; set; }
     }
 }
+
