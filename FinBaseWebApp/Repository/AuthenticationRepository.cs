@@ -21,9 +21,9 @@ namespace FinBaseWebApp.Repository
             return await _authDAO.Public_LoginUser(UserName, Password);
         }
 
-        public async Task<LoginModel> GetUserByUsername(string UserName)
+        public async Task<LoginModel> GetUserByUsername(string UserId)
         {
-            return await _authDAO.GetUserDAO(UserName);
+            return await _authDAO.GetUserDAO(UserId);
         }
 
         /*public async Task<List<RefreshTokenModel>> GetAllRefreshToken()
@@ -34,33 +34,31 @@ namespace FinBaseWebApp.Repository
 
         public async Task<RefreshTokenModel> GetRefreshTokenById(string tokenId)
         {
-            var repo = new AuthenticateModuleDAO();
-            return await repo.GetTokenById(tokenId);     
+            //var repo = new AuthenticateModuleDAO();
+            return await _authDAO.GetTokenById(tokenId);     
         }
 
         public async Task<bool> AddRefreshToken(RefreshTokenModel refreshToken)
         {
-            var repo = new AuthenticateModuleDAO();
-
-            if (await repo.CheckTokenByUserName(refreshToken))    
+            //var repo = new AuthenticateModuleDAO();
+            if (await _authDAO.CheckTokenByUserName(refreshToken))    
             {   
-                var result = await repo.DeleteRefreshTokenById(refreshToken.TOKENID);     
+                var result = await _authDAO.DeleteRefreshTokenById(refreshToken.TOKENID);     
             }
 
-            var Id = await repo.InsertRefreshToken(refreshToken);
+            var Id = await _authDAO.InsertRefreshToken(refreshToken);
             return !string.IsNullOrWhiteSpace(Id);      
         }
 
         public async Task<bool> RemoveRefreshTokenById(string tokenId)
         {
-            var repo = new AuthenticateModuleDAO();
-
-            if(await repo.CheckTokenById(tokenId))    
+            //var repo = new AuthenticateModuleDAO();
+            if(await _authDAO.CheckTokenById(tokenId))    
             {   
-                return await repo.DeleteRefreshTokenById(tokenId);    
+                return await _authDAO.DeleteRefreshTokenById(tokenId);    
             }
 
-            return false;     
+             return false;     
         }
 
         public void Dispose()
