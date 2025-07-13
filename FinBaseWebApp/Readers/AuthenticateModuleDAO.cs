@@ -18,11 +18,11 @@ namespace FinBaseWebApp.Readers
         private readonly string _connectionString;      
 
         public AuthenticateModuleDAO()
-        {
+             {
             _connectionString = ConfigurationManager.ConnectionStrings["FinBaseDB"].ConnectionString;       
         }
 
-        public async Task<LoginModel> GetUserDAO(string UserName)
+        public async Task<LoginModel> GetUserDAO(string UserId)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace FinBaseWebApp.Readers
                     string query = AuthenticateModuleQueries.GET_USER_DETAILS;      
                     var result = await dbConnection.QueryFirstOrDefaultAsync<dynamic>(query, new
                     {
-                        @UserName = UserName
+                        @UserId = UserId
                     });
                     if (result == null)
                         return null;
@@ -75,14 +75,12 @@ namespace FinBaseWebApp.Readers
                     var user = new LoginModel
                     {
                         UserId = result.UserId.ToString(),  
-                        MobileNo = result.MobileNo, 
                         EmailId = result.EmailId,   
-                        Name = result.Name, 
-                        PasswordHash = result.PasswordHash, 
+                        Name = result.Name,     
                         RoleName = result.RoleName  
                     };  
 
-                    if (!BCrypt.Net.BCrypt.Verify(Password, user.PasswordHash))
+                    if (!BCrypt.Net.BCrypt.Verify(Password, result.PasswordHash))
                         return null;
 
                     return user;
@@ -122,12 +120,26 @@ namespace FinBaseWebApp.Readers
                     dbConnection.Open();
 
                     string query = AuthenticateModuleQueries.GET_TOKEN_BY_ID;
-                    return await dbConnection.QueryFirstOrDefaultAsync<RefreshTokenModel>(query, new { @ID = tokenid });    
+                    var result = await dbConnection.QueryAsync(query, new { @ID = tokenid });
+                    var token = result.FirstOrDefault();
+
+                    if (token == null)
+                        return null;
+
+                    return new RefreshTokenModel
+                    {
+                        TOKENID = token.TokenID,
+                        UserId = token.UserId.ToString(), 
+                        ISSUEDDATETIME = token.ISSUEDDATETIME,
+                        EXPIREDDATETIME = token.EXPIREDDATETIME,
+                        PROTECTEDTICKET = token.PROTECTEDTICKET
+                    };
                 }
             }
             catch (Exception ex)
             {
-                return null;
+                var details = ex.Message + Environment.NewLine + ex.ToString() + Environment.NewLine + (ex.InnerException == null ? "" : ex.InnerException.ToString());
+                throw;
             }   
         }   
 
@@ -137,8 +149,9 @@ namespace FinBaseWebApp.Readers
             {
                 dbConnection.Open();
 
-                string query = AuthenticateModuleQueries.CHECK_TOKEN_BY_ID;     
-                return dbConnection.Query<RefreshTokenModel>(query, new { @tokenid = tokenId }).Any();    
+                string query = AuthenticateModuleQueries.CHECK_TOKEN_BY_ID;
+                var result = await dbConnection.QueryAsync(query, new { @tokenid = tokenId });
+                return result.Any();
             }
         }
 
@@ -148,8 +161,21 @@ namespace FinBaseWebApp.Readers
             {
                 dbConnection.Open();
 
-                string query = AuthenticateModuleQueries.CHECK_TOKEN_BY_USERNAME;    
-                return dbConnection.Query<RefreshTokenModel>(query, new { @Username = refreshToken.USERNAME }).Any();
+                string query = AuthenticateModuleQueries.CHECK_TOKEN_BY_USERNAME;   
+
+                var count = await dbConnection.ExecuteScalarAsync<int>(query, new { UserId = refreshToken.UserId });
+                return count > 0;   
+                /*Guid userId;    
+
+                if (Guid.TryParse(refreshToken.UserId, out userId))     
+                {   
+                    var count = await dbConnection.ExecuteScalarAsync<int>(query, new { UserId = new Guid(refreshToken.UserId) });      
+                    return count > 0;   
+                }   
+                else
+                {
+                    return false;
+                }*/
             }
         }       
 
@@ -173,18 +199,18 @@ namespace FinBaseWebApp.Readers
                 dbConnection.Open();
 
                 string query = AuthenticateModuleQueries.INSERT_REFRESH_TOKEN;
-                string Id = await dbConnection.QueryFirstOrDefaultAsync<string>(query, new
+                int rowsAffected = await dbConnection.ExecuteAsync(query, new
                 {
-                    @Id = user.TOKENID,
-                    @UserName = user.USERNAME,
-                    @IssuedDateTime = user.ISSUEDDATETIME,
-                    @ExpiredDateTime = user.EXPIREDDATETIME,
-                    @ProtectedTicket = user.PROTECTEDTICKET
+                    @Id = user.TOKENID,     
+                    @UserId = user.UserId,        
+                    @IssuedDateTime = user.ISSUEDDATETIME,      
+                    @ExpiredDateTime = user.EXPIREDDATETIME,    
+                    @ProtectedTicket = user.PROTECTEDTICKET     
                 });
 
-                return Id;
-            }
+                return (rowsAffected > 0) ? user.TOKENID : null;    
+            }   
         }   
-    }
-}
+    }   
+}   
 
